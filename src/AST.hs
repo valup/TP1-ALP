@@ -1,3 +1,6 @@
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE GADTs #-}
 module AST where
 
 -- Identificadores de Variable
@@ -13,8 +16,10 @@ data Exp a where
   Minus ::Exp Int -> Exp Int -> Exp Int
   Times ::Exp Int -> Exp Int -> Exp Int
   Div ::Exp Int -> Exp Int -> Exp Int
+  ESeq :: Exp Int -> Exp Int -> Exp Int
+  EAssgn :: Variable -> Exp Int -> Exp Int
 
-  -- Expreseiones booleanas
+  -- Expresiones booleanas
   BTrue ::Exp Bool
   BFalse ::Exp Bool
   Lt ::Exp Int -> Exp Int -> Exp Bool

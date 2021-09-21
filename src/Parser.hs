@@ -46,24 +46,25 @@ lis = makeTokenParser
 --- Parser de expressiones enteras
 -----------------------------------
 intexp :: Parser (Exp Int)
-intexp = do e <- expr
+intexp = do e <- eassgn
             do reservedOp lis ","
                ESeq e <$> intexp
               <|> return e
 
+eassgn :: Parser (Exp Int)
+eassgn = try (do {v <- identifier lis;
+                  reservedOp lis "=";
+                  EAssgn v <$> eassgn})
+             <|> expr
+
 expr :: Parser (Exp Int)
-expr = do try eassgn
-         <|> do t <- term
+expr = try (do {t <- term;
                 do reservedOp lis "+"
                    Plus t <$> intexp
                   <|> do reservedOp lis "-"
                          Minus t <$> intexp
-                  <|> return t
-
-eassgn :: Parser (Exp Int)
-eassgn = do v <- identifier lis
-            reservedOp lis "="
-            EAssgn v <$> expr
+                  <|> return t})
+            <|> eassgn
 
 term :: Parser (Exp Int)
 term = do f <- factor
@@ -93,7 +94,7 @@ boolexp = do b <- bool1
 bool1 :: Parser (Exp Bool)
 bool1 = do b <- bool2
            do reservedOp lis "&&"
-              Or b <$> bool1
+              And b <$> bool1
              <|> return b
 
 bool2 :: Parser (Exp Bool)
@@ -155,3 +156,6 @@ comm' = do reserved lis "if"
 ------------------------------------
 parseComm :: SourceName -> String -> Either ParseError Comm
 parseComm = parse (totParser comm)
+
+parsex :: Parser a -> String -> Either ParseError a
+parsex p = parse (totParser p) ""

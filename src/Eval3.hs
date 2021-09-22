@@ -36,6 +36,7 @@ update x v (s, t) = (M.insert x v s, t)
 addTrace :: String -> State -> State
 addTrace str (s, t) = (s, t ++ str)
 
+-- Funcion auxiliar para añadir a la traza
 trcStr :: Variable -> Int -> String
 trcStr v n = "Let " ++ v ++ " " ++ show n ++ " - "
 

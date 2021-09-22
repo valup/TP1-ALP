@@ -35,10 +35,10 @@ eval p = stepCommStar p initState
 -- Evalua multiples pasos de un comnado en un estado,
 -- hasta alcanzar un Skip
 stepCommStar :: Comm -> State -> Either Error State
-stepCommStar Skip s = return s
-stepCommStar c    s = do
-  (c' :!: s') <- stepComm c s
-  stepCommStar c' s'
+stepCommStar Skip s = Right s
+stepCommStar c    s = case stepComm c s of
+                        Right (c' :!: s') -> stepCommStar c' s'
+                        Left err          -> Left err
 
 -- Evalua un paso de un comando en un estado dado
 -- Completar la definición

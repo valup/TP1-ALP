@@ -58,13 +58,12 @@ eassgn = try (do {v <- identifier lis;
              <|> expr
 
 expr :: Parser (Exp Int)
-expr = try (do {t <- term;
-                do reservedOp lis "+"
-                   Plus t <$> intexp
-                  <|> do reservedOp lis "-"
-                         Minus t <$> intexp
-                  <|> return t})
-            <|> eassgn
+expr = do t <- term;
+          do reservedOp lis "+"
+             Plus t <$> intexp
+            <|> do reservedOp lis "-"
+                   Minus t <$> intexp
+            <|> return t
 
 term :: Parser (Exp Int)
 term = do f <- factor
